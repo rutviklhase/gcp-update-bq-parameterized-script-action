@@ -1,0 +1,19 @@
+# Testing and Linting Requirements
+black==21.5b1
+autoflake==1.4
+flake8==3.9.2
+flake8-bugbear==21.4.3
+flake8-pie==0.13.0
+isort==5.8.0          
+coverage==5.5
+pytest==6.2.4
+pytest-cov==2.11.1
+pytest-env
+pytest-mock==3.6.0
+pytest-xdist[psutil]==2.2.1
+pylint==2.8.2
+mypy==0.812
+requests_mock==1.9.3
+
+# Extra Requirements
+pyclean==2.0.0

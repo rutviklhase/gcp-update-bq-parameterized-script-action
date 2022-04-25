@@ -1,0 +1,24 @@
+name: 'GCP BQ Update Parameterized Script'
+description: 'Update GCP Big Query script by replacing the paramter with passed values'
+author: 'Kapil Kumar Trivedi'
+
+inputs:
+  ddl_read_folder_path:
+    description: 'Directory path to the sql files which needs to be processed with the parameters passed in param_string. Defaults to the "data_pipeline/ddl_scripts/output/" path.'
+    required: true
+    default: 'data_pipeline/ddl_scripts/output/'
+  ddl_write_folder_path:
+    description: 'Directory path to write the processed files'
+    required: true 
+    default: 'data_pipeline/ddl_scripts/output/dev'
+  param_string:
+    description: 'Parameter string for substitution. format: key=value,key=value,'
+    required: true
+  debug:
+    description: 'Boolean value True/False - if True will enable logging. Defaults to "False"'
+    required: false
+    default: 'False'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
