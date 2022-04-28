@@ -24,17 +24,38 @@ on:
       - master
 jobs:
     update-parameterized-script:
+      name: JOB 1. Set & Execute in Development
+      container: google/cloud-sdk:latest   # Job will run in this Docker image
+      runs-on: gcp
+      env:
+        GCP_PROJECT_ID: cnf-data-dev-d4cc14
+        CNF_PROJECT_ID: cnf-dlf-dev-8dbb70
+
+      steps:
+        #===============================================#
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        #===============================================#
+        - name: Run Parameterized Script
+          uses: GeneralMills/gcp-update-bq-parameterized-script-action@add-action
+          with:
+            param_string: "CNF_PROJECT_ID=${{env.CNF_PROJECT_ID}},PROJECT_ID=${{env.GCP_PROJECT_ID}}"
+            ddl_read_folder_path: data_pipeline/ddl_scripts/output/
+            ddl_write_folder_path: data_pipeline/ddl_scripts/output/dev
+            debug: 'False'
     
 ```
 
 ### Explaining the workflow:
 1. on -> push -> branches: master: This will be triggered when a push is made to the master branch.
 1. runs-on: gcp: This uses GCP based github runners.
-1. environment: dev: This sets the github action environment, causing the action to use repository secrets defined for dev. See the workflow secrets information below for details.
-1. Checkout: this step causes the repo to be checked out, allowing the action to read the json file in the repo.
-1. Import Secrets: this uses secrets defined in github repo to call out to vault to get DB Portal authentication secrets.
-1. Set UP BQ Table Security: this is the main action that parses the json file and calls out to DB Portal to set security.  Its inputs include azure client data that is needed to authenticate with DB Portal.
+1. env: This sets the github action environment variables, allowing us to use these variables for the job.
+1. Checkout: this step causes the repo to be checked out, allowing the action to read the "*.sql" file in the repo path.
+1. Run Parameterized Script: this is the main action that runs a python scripts in the background. It takes the directory path which have the sql files, path where we wont to store the processed files and parameter string for subsitution.
 
+### Workflow Secrets Needed:
+No secrets are needed to run action.
 
 # Local Dev Setup
 
@@ -88,21 +109,3 @@ same script that is run as part of the CI/CD process.
 To make the action live, push it to the main branch.
 
 Use tags to reference versions of your action: [create a version tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Testing Feature Branches
-
-To test a feature branch, change  the module version in the calling workflow.  See the example below:
-
-```yaml
-name: Workflow Example
-on:
-  push:
-    branches:
-      - master
-jobs:
-  update-parameter-script:
-    runs-on: gcp
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2   
-```
