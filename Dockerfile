@@ -12,7 +12,7 @@ RUN pip3 --version; pip3 install -U pip; pip3 --version
 RUN pip install -r /requirements.txt
 
 
-COPY bigquery_update_parameterized_script.py /bigquery_update_parameterized_script.py
+COPY src/bigquery_update_parameterized_script.py /bigquery_update_parameterized_script.py
 
 # Executes python file when the Docker container starts up
 # CMD ['/bin/ls', '-l', '/bin/sh/python*']
