@@ -35,17 +35,6 @@ jobs:
 1. Import Secrets: this uses secrets defined in github repo to call out to vault to get DB Portal authentication secrets.
 1. Set UP BQ Table Security: this is the main action that parses the json file and calls out to DB Portal to set security.  Its inputs include azure client data that is needed to authenticate with DB Portal.
 
-### About the gcpBigQueryTablesSecurityFile file:
-1. See the sample files below.
-1. Each file must contain a `defaults` and a `tables` section.  `defaults` can be empty, if not needed.
-1. These five values are required for all tables being processed: `applicationName`, `project`, `dataset`, `name`, `securityClassification`
-1. Each table in the `tables` section must include a `name` value.  
-1. The other values can be defined in the `tables` or `defaults` section.  
-1. If values are defined in both `defaults` and `tables`, the table value is used, overriding the default.
-1. See the second example for a full list of attributes available for a table definition.
-1. All Groups and Service Accounts should be referenced by their email addresses.  This is one change from Hadoop security.
-1. See the DB Portal API for context around those attributes.
-
 
 # Local Dev Setup
 
@@ -111,28 +100,9 @@ on:
     branches:
       - master
 jobs:
-  Set-GCP-BQ-Table-Security:
+  update-parameter-script:
     runs-on: gcp
     steps:
       - name: Checkout
         uses: actions/checkout@v2   
-      - name: Import Secrets
-        uses: hashicorp/vault-action@v2.1.2
-        with:
-          url: ${{ env.VAULT_URL }}
-          method: approle
-          roleId: ${{ secrets.ROLE_ID }}
-          secretId: ${{ secrets.SECRET_ID }}
-          caCertificate: ${{ secrets.VAULT_CERT }}
-          secrets: |
-              secret/data/cloverleaf/github/prod/github-database-portal-client-id value | DATABASE_PORTAL_CLIENT_ID;
-              secret/data/cloverleaf/github/prod/github-database-portal-client-secret value | DATABASE_PORTAL_CLIENT_SECRET;
-      - name: Set GCP BQ Table Security
-        uses: GeneralMills/gcp-bq-table-security-action@FEATURE-BRANCH-NAME
-        with:
-          table_security_file: GCPBigQueryTablesSecurity.json
-          azure_client_id: ${{ env.DATABASE_PORTAL_CLIENT_ID }}
-          azure_client_secret: ${{ env.DATABASE_PORTAL_CLIENT_SECRET }}
-          azure_tenent_id: ${{ secrets.AZURE_TENENT_ID }}
-          is_testing: "True"
 ```

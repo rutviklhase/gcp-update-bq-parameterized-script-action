@@ -99,7 +99,9 @@ def update_sql_files(read_path, write_path, param_string, logger):
         param_dict = parse_parameter_string(param_string, logger)
         logger.info("Parsed Parameter Configuration is %s", param_dict)
         all_sql_files = find_sql_files(read_path, logger)
-        path = write_path if not (write_path is None or write_path.strip() == "") else read_path
+        path = read_path
+        if not (write_path is None or write_path.strip() == ""):
+            path = write_path
         for file in all_sql_files:
             if update_parameters(file, path, param_dict, logger):
                 logger.info(
@@ -160,16 +162,11 @@ def get_logger(debug):
 
 def run_main_flow(ddl_read_folder_path: str, ddl_write_folder_path: str, param_string: str, debug: bool):
     print(
-        "Starting to process sql files on the directory path: %s.",
-        ddl_read_folder_path,
+        "Processing files on the path: %s." % ddl_read_folder_path,
     )
+    print("Parameters passed are: %s" % param_string)
     print(
-        "Parameters passed are: %s.",
-        param_string,
-    )
-    print(
-        "Processed files will be stored on the directory path: %s.",
-        ddl_write_folder_path,
+        "Processed files will be stored on path: %s." % ddl_write_folder_path,
     )
     logger = get_logger(debug)
     return update_sql_files(ddl_read_folder_path, ddl_write_folder_path, param_string, logger)
