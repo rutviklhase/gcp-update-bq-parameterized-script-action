@@ -8,7 +8,9 @@ LABEL repository = 'https://github.com/GeneralMills/gcp-bq-update-parameterized-
 LABEL maintainer = 'Kapil Kumar Trivedi'
 
 COPY requirements.txt /requirements.txt
+RUN pip3 --version; pip3 install -U pip; pip3 --version
 RUN pip install -r /requirements.txt
+
 
 COPY bigquery_update_parameterized_script.py /bigquery_update_parameterized_script.py
 
